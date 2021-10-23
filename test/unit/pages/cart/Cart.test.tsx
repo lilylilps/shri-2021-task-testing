@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { createMemoryHistory } from "history";
 
 import { it, describe, expect } from "@jest/globals";
-import { render,  within } from "@testing-library/react";
+import { screen, render,  within, fireEvent } from "@testing-library/react";
 import events from "@testing-library/user-event";
 
 import { addToCart, initStore } from "../../../../src/client/store";
@@ -59,7 +59,6 @@ describe('проверка cart', () => {
 
         const header = getByRole('heading', { name: /catalog/i });
         expect(header.textContent).toEqual("Catalog");
-        //screen.logTestingPlaygroundURL();
     });
 
     it('в шапке рядом со ссылкой на корзину отображается количество не повторяющихся товаров в ней', async () => {
@@ -342,9 +341,76 @@ describe('проверка cart', () => {
         events.click(getByRole('button', { name: /clear shopping cart/i }));
 
         const catalogLink = queryByRole('link', { name: /catalog/i });
-
+        
         expect(queryByRole('table')).toBeNull();
         expect(catalogLink).not.toBeNull();
-        // screen.logTestingPlaygroundURL();
+    });
+
+    it('успешное оформление заказа',async () => {
+        const firstProduct = {
+            id: 1,
+            name: "shorts",
+            price: 200,
+        } as Product;
+    
+        const secondProduct = {
+            id: 2,
+            name: "pants",
+            price: 600,
+        } as Product;
+    
+        mockedAxios.get.mockResolvedValue({
+            data: [
+                firstProduct,
+                secondProduct,
+            ]
+        });
+
+        mockedAxios.post.mockResolvedValue({
+            data:
+                { id: 55 }
+            
+        });
+    
+        const history = createMemoryHistory({
+            initialEntries: ['/cart'],
+            initialIndex: 0
+        });
+    
+        const cartPage = (
+            <Router history={history}>
+                <Provider store={store}>
+                    <Cart />
+                </Provider>
+            </Router>
+        );
+    
+        const { getByLabelText, getByRole, getByText } = render(cartPage);
+    
+        store.dispatch(addToCart(firstProduct));
+        store.dispatch(addToCart(secondProduct));
+            
+        await (function (ms) {
+            return new Promise((res) => setTimeout(() => res(1), ms));
+        })(100);
+
+        const nameInput = getByLabelText('Name');
+        fireEvent.change(nameInput, {target: {value: 'lil'}});
+
+        const phoneInput = getByLabelText('Phone');
+        fireEvent.change(phoneInput, {target: {value: '83344433333'}});
+
+        const addressInput = getByLabelText('Address');
+        fireEvent.change(addressInput, {target: {value: 'mosc'}});
+
+        const submitButton = getByRole('button', { name: /checkout/i });
+        events.click(submitButton);
+
+        await (function (ms) {
+            return new Promise((res) => setTimeout(() => res(1), ms));
+        })(100);
+
+        expect(getByText('55')).not.toBeNull();
+
     });
 });
