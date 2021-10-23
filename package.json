@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "scripts": {
         "start": "nodemon ./src/server/index.ts",
-        "test": "jest --env=jsdom",
         "build": "webpack --mode=production --node-env=production",
         "watch": "webpack --watch"
     },
