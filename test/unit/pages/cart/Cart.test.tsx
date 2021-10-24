@@ -11,7 +11,7 @@ import { addToCart, initStore } from "../../../../src/client/store";
 import { Application } from "../../../../src/client/Application";
 import { Cart } from "../../../../src/client/pages/Cart";
 import { ExampleApi, CartApi } from "../../../../src/client/api";
-import { Product } from '../../../../src/common/types';
+import { CartItem, Product } from '../../../../src/common/types';
 
 import axios from 'axios';
 import { Store } from "redux";
@@ -62,24 +62,21 @@ describe('проверка cart', () => {
     });
 
     it('в шапке рядом со ссылкой на корзину отображается количество не повторяющихся товаров в ней', async () => {
-        const firstProduct = {
-            id: 1,
-            name: "shorts",
-            price: 200,
-        } as Product;
-
-        const secondProduct = {
-            id: 2,
-            name: "pants",
-            price: 600,
-        } as Product;
-
         mockedAxios.get.mockResolvedValue({
             data: [
-                firstProduct,
-                secondProduct,
+                { id: 1, name: "shorts", price: 200 },
             ]
         });
+
+        const product = {
+            count: 1,
+            name: "shorts",
+            price: 200,
+        } as CartItem;
+
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/cart'],
@@ -95,57 +92,30 @@ describe('проверка cart', () => {
         );
 
         const { getByRole } = render(application);
-        store.dispatch(addToCart(firstProduct));
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
         })(100);
 
         let cartLink = getByRole('link', { name: /cart \(1\)/i });
         expect(cartLink.textContent).toEqual('Cart (1)');
-
-        store.dispatch(addToCart(secondProduct));
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
-
-        cartLink = getByRole('link', { name: /cart \(2\)/i });
-        expect(cartLink.textContent).toEqual('Cart (2)');
-
-        store.dispatch(addToCart(secondProduct));
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
-
-        cartLink = getByRole('link', { name: /cart \(2\)/i });
-        expect(cartLink.textContent).toEqual('Cart (2)');
     });
 
     it('в корзине отображается таблица с добавленными в нее товарами', async () => {
-        const firstProduct = {
-            id: 1,
-            name: "shorts",
-            price: 200,
-        } as Product;
-
-        const secondProduct = {
-            id: 2,
-            name: "pants",
-            price: 600,
-        } as Product;
-
-        const thirdProduct = {
-            id: 3,
-            name: "boots",
-            price: 800,
-        } as Product;
-
         mockedAxios.get.mockResolvedValue({
             data: [
-                firstProduct,
-                secondProduct,
-                thirdProduct
+                { id: 1, name: "shorts", price: 200 },
             ]
         });
+
+        const product = {
+            count: 1,
+            name: "shorts",
+            price: 200,
+        } as CartItem;
+
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/cart'],
@@ -161,9 +131,6 @@ describe('проверка cart', () => {
         );
 
         const { getByRole } = render(cartPage);
-
-        store.dispatch(addToCart(firstProduct));
-        store.dispatch(addToCart(secondProduct));
 
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
@@ -171,38 +138,25 @@ describe('проверка cart', () => {
 
         let table = getByRole('table');
         let rows = table.children[1];
-        expect(rows.children.length).toEqual(2);
-
-        store.dispatch(addToCart(thirdProduct));
-
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
-
-        table = getByRole('table');
-        rows = table.children[1];
-        expect(rows.children.length).toEqual(3);
+        expect(rows.children.length).toEqual(1);
     });
 
     it('для каждого товара отображаются название, цена, количество, стоимость, и общая сумма заказа', async () => {
-        const firstProduct = {
-            id: 1,
-            name: "shorts",
-            price: 200,
-        } as Product;
-
-        const secondProduct = {
-            id: 2,
-            name: "pants",
-            price: 600,
-        } as Product;
-
         mockedAxios.get.mockResolvedValue({
             data: [
-                firstProduct,
-                secondProduct,
+                { id: 1, name: "shorts", price: 200 },
             ]
         });
+
+        const product = {
+            count: 1,
+            name: "shorts",
+            price: 200,
+        } as CartItem;
+
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/cart'],
@@ -218,8 +172,6 @@ describe('проверка cart', () => {
         );
 
         const { getByRole } = render(cartPage);
-
-        store.dispatch(addToCart(firstProduct));
 
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
@@ -243,74 +195,24 @@ describe('проверка cart', () => {
         expect(firstItemTotalPrice.textContent).toEqual('$200');
 
         expect(totalOrderPrice.textContent).toEqual('$200');
-
-
-        store.dispatch(addToCart(firstProduct));
-
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
-
-        table = getByRole('table');
-        rows = table.children[1];
-        firstItem = rows.children[0];
-        firstItemCount = firstItem.children[3];
-        firstItemTotalPrice = firstItem.children[4];
-
-        footer = table.children[2];
-        orderPrice = footer.children[0];
-        totalOrderPrice = orderPrice.children[1];
-
-        expect(firstItemCount.textContent).toEqual('2');
-        expect(firstItemTotalPrice.textContent).toEqual('$400');
-
-        expect(totalOrderPrice.textContent).toEqual('$400');
-
-        store.dispatch(addToCart(secondProduct));
-
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
-
-        table = getByRole('table');
-        rows = table.children[1];
-        let secondItem = rows.children[1];
-        let secondItemName = secondItem.children[1];
-        let secondItemPrice = secondItem.children[2];
-        let secondItemCount = secondItem.children[3];
-        let secondItemTotalPrice = secondItem.children[4];
-
-        footer = table.children[2];
-        orderPrice = footer.children[0];
-        totalOrderPrice = orderPrice.children[1];
-
-        expect(secondItemName.textContent).toEqual('pants');
-        expect(secondItemPrice.textContent).toEqual('$600');
-        expect(secondItemCount.textContent).toEqual('1');
-        expect(secondItemTotalPrice.textContent).toEqual('$600');
-
-        expect(totalOrderPrice.textContent).toEqual('$1000');
     });
 
     it('по нажатию на кнопку "очистить корзину" все товары удаляются', async () => {
-        const firstProduct = {
-            id: 1,
-            name: "shorts",
-            price: 200,
-        } as Product;
-
-        const secondProduct = {
-            id: 2,
-            name: "pants",
-            price: 600,
-        } as Product;
-
         mockedAxios.get.mockResolvedValue({
             data: [
-                firstProduct,
-                secondProduct,
+                { id: 1, name: "shorts", price: 200 },
             ]
         });
+
+        const product = {
+            count: 1,
+            name: "shorts",
+            price: 200,
+        } as CartItem;
+
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/cart'],
@@ -326,17 +228,13 @@ describe('проверка cart', () => {
         );
 
         const { queryByRole, getByRole } = render(cartPage);
-
-        store.dispatch(addToCart(firstProduct));
-        store.dispatch(addToCart(secondProduct));
-
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
         })(100);
 
         let table = getByRole('table');
         let rows = table.children[1];
-        expect(rows.children.length).toEqual(2);
+        expect(rows.children.length).toEqual(1);
 
         events.click(getByRole('button', { name: /clear shopping cart/i }));
 
@@ -347,24 +245,21 @@ describe('проверка cart', () => {
     });
 
     it('успешное оформление заказа',async () => {
-        const firstProduct = {
-            id: 1,
-            name: "shorts",
-            price: 200,
-        } as Product;
-    
-        const secondProduct = {
-            id: 2,
-            name: "pants",
-            price: 600,
-        } as Product;
-    
         mockedAxios.get.mockResolvedValue({
             data: [
-                firstProduct,
-                secondProduct,
+                { id: 1, name: "shorts", price: 200 },
             ]
         });
+
+        const product = {
+            count: 1,
+            name: "shorts",
+            price: 200,
+        } as CartItem;
+
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         mockedAxios.post.mockResolvedValue({
             data:
@@ -386,9 +281,6 @@ describe('проверка cart', () => {
         );
     
         const { getByLabelText, getByRole, getByText } = render(cartPage);
-    
-        store.dispatch(addToCart(firstProduct));
-        store.dispatch(addToCart(secondProduct));
             
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
@@ -411,6 +303,5 @@ describe('проверка cart', () => {
         })(100);
 
         expect(getByText('55')).not.toBeNull();
-
     });
 });

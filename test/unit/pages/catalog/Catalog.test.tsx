@@ -4,13 +4,12 @@ import { Provider } from "react-redux";
 import { createMemoryHistory } from "history";
 
 import { it, describe, expect } from "@jest/globals";
-import { render } from "@testing-library/react";
-import events from "@testing-library/user-event";
+import { screen, render } from "@testing-library/react";
 
 import { addToCart, initStore } from "../../../../src/client/store";
 import { Catalog } from "../../../../src/client/pages/Catalog";
 import { ExampleApi, CartApi } from "../../../../src/client/api";
-import { Product, ProductShortInfo } from '../../../../src/common/types';
+import { CartItem, Product } from '../../../../src/common/types';
 
 import axios from 'axios';
 import { Store } from "redux";
@@ -25,11 +24,12 @@ describe('проверка catalog', () => {
     beforeAll(() => {
         api = new ExampleApi('');
         cart = new CartApi();
-        store = initStore(api, cart);
     });
 
     beforeEach(() => {
         jest.clearAllMocks();
+        localStorage.clear();
+        store = initStore(api, cart);
     });
 
     it('если в каталоге нет товаров, отображается Loading', () => {
@@ -87,15 +87,21 @@ describe('проверка catalog', () => {
     });
 
     it('если товар уже добавлен в корзину, в каталоге отображается сообщение об этом', async () => {
+        mockedAxios.get.mockResolvedValue({
+            data: [
+                { id: 1, name: "shorts", price: 200 },
+            ]
+        });
+
         const product = {
-            id: 1,
+            count: 1,
             name: "shorts",
             price: 200,
-        } as Product;
+        } as CartItem;
 
-        mockedAxios.get.mockResolvedValue({
-            data: [product]
-        });
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/catalog'],
@@ -111,14 +117,13 @@ describe('проверка catalog', () => {
         );
 
         const { queryByText } = render(catalogPage);
-
-        store.dispatch(addToCart(product));
-
+        
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
         })(100);
 
         const cartBage = queryByText('Item in cart');
+        
         expect(cartBage).not.toBeNull();
     });
 

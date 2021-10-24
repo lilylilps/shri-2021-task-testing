@@ -49,7 +49,7 @@ describe('проверка productDetails', () => {
         expect(tree).toMatchSnapshot();
     });
 
-    it('по клику на Add to cart появляется "Item in cart"', () => {
+    it('по клику на Add to cart появляется "Item in cart" и меняется количество товаров в корзине', () => {
         const history = createMemoryHistory({
             initialEntries: ['/catalog/1'],
             initialIndex: 0
@@ -67,39 +67,16 @@ describe('проверка productDetails', () => {
 
         events.click(getByRole('button', { name: /add to cart/i }));
 
-        const cartBage = queryByText('Item in cart');
-        expect(cartBage).not.toBeNull();
-    });
-
-    it('если товар уже добавлен в корзину, повторное нажатие кнопки "добавить в корзину" должно увеличивать его количество', async () => {
-        const history = createMemoryHistory({
-            initialEntries: ['/catalog/1'],
-            initialIndex: 0
-        });
-
-        const productPage = (
-            <Router history={history}>
-                <Provider store={store}>
-                    <ProductDetails product={product} />
-                </Provider>
-            </Router>
-        );
-
-        const { getByRole } = render(productPage);
-        
-        events.click(getByRole('button', { name: /add to cart/i })); 
-
         let cartList = cart.getState();
         let count = cartList[1].count;
         expect(count).toEqual(1);
 
+        const cartBage = queryByText('Item in cart');
+        expect(cartBage).not.toBeNull();
+
         events.click(getByRole('button', { name: /add to cart/i }));
         cartList = cart.getState();
         count = cartList[1].count;
-        
-        await (function (ms) {
-            return new Promise((res) => setTimeout(() => res(1), ms));
-        })(100);
         
         expect(count).toEqual(2);
     });

@@ -15,23 +15,56 @@ describe('проверка компонента form', () => {
         expect(tree).toMatchSnapshot();
     });
     
-    it('валидация проходит', () => {
+    it('данные не введены', () => {
+        const form = <Form onSubmit={onSubmit} />
+
+        const { getByRole } = render(form);
+
+        const submitButton = getByRole('button', { name: /checkout/i });
+        events.click(submitButton);
+
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('введено невалидное имя', () => {
         const form = <Form onSubmit={onSubmit} />
 
         const { getByRole, getByLabelText } = render(form);
 
         const nameInput = getByLabelText('Name');
-        fireEvent.change(nameInput, {target: {value: 'lil'}});
-
-        const phoneInput = getByLabelText('Phone');
-        fireEvent.change(phoneInput, {target: {value: '83344433333'}});
-
-        const addressInput = getByLabelText('Address');
-        fireEvent.change(addressInput, {target: {value: 'mosc'}});
+        fireEvent.change(nameInput, {target: {value: ' '}});
 
         const submitButton = getByRole('button', { name: /checkout/i });
         events.click(submitButton);
 
-        expect(onSubmit).toHaveBeenCalled();
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('введен невалидный номер телефона', () => {
+        const form = <Form onSubmit={onSubmit} />
+
+        const { getByRole, getByLabelText } = render(form);
+
+        const phoneInput = getByLabelText('Phone');
+        fireEvent.change(phoneInput, {target: {value: '8333'}});
+
+        const submitButton = getByRole('button', { name: /checkout/i });
+        events.click(submitButton);
+
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('введен невалидный адрес', () => {
+        const form = <Form onSubmit={onSubmit} />
+
+        const { getByRole, getByLabelText } = render(form);
+
+        const addressInput = getByLabelText('Address');
+        fireEvent.change(addressInput, {target: {value: ' '}});
+
+        const submitButton = getByRole('button', { name: /checkout/i });
+        events.click(submitButton);
+
+        expect(onSubmit).not.toHaveBeenCalled();
     })
 });
