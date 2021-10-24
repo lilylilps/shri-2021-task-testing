@@ -1,5 +1,11 @@
 module.exports = {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://shri.yandex/hw/store',
+
+    sets: {
+        desktop: {
+            files: 'test/hermione/*.hermione.js',
+        },
+    },
 
     browsers: {
         chrome: {

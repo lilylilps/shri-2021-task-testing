@@ -1,6 +1,6 @@
-import {assert} from "chai";
+const { assert } = require('chai');
 
-describe('проверка статических страниц', async () => {
+describe('проверка статических страниц', async function () {
   it('главная страница', async function () {
     const browser = this.browser;
     await this.browser.url("/hw/store");
@@ -9,7 +9,7 @@ describe('проверка статических страниц', async () => {
     });
 
   });
-  it('страница контактов', async () => {
+  it('страница контактов', async function () {
     const browser = this.browser;
     await this.browser.url("/hw/store/contacts");
     await browser.assertView("plain", ".Application", {
@@ -17,7 +17,7 @@ describe('проверка статических страниц', async () => {
     });
   });
 
-  it('страница доставки', async () => {
+  it('страница доставки', async function () {
     const browser = this.browser;
     await this.browser.url("/hw/store/delivery");
     await browser.assertView("plain", ".Application", {
