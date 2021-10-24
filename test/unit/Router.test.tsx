@@ -181,4 +181,26 @@ describe('проверка роутинга', () => {
         expect(history.location.pathname).toEqual("/catalog/1");
         
     });
+
+    it('при выборе элемента из меню "гамбургера", меню должно закрываться', async () => {
+        const history = createMemoryHistory({
+            initialEntries: ['/'],
+            initialIndex: 0
+        });
+
+        const application = (
+            <Router history={history}>
+                <Provider store={store}>
+                    <Application />
+                </Provider>
+            </Router>
+        );
+
+        const { getByRole } = render(application);
+
+        await events.click(getByRole('link', {name: /contacts/i}));
+
+        const closedMenu = !!document.querySelector('.navbar-collapse.collapse');
+        expect(closedMenu).toBeTruthy();
+    });
 })
