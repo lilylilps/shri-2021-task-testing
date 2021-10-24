@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`проверка компонента productItem snapshot 1`] = `
+<div
+  className="ProductItem card w-100 mb-4"
+  data-testid={1}
+>
+  <img
+    className="Image card-img-top"
+    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkMAYAADkANVKH3ScAAAAASUVORK5CYII="
+  />
+  <div
+    className="card-body"
+  >
+    <h5
+      className="ProductItem-Name card-title"
+    >
+      shorts
+    </h5>
+    <p
+      className="ProductItem-Price card-text"
+    >
+      $
+      200
+    </p>
+    <a
+      className="ProductItem-DetailsLink card-link"
+      href="/catalog/1"
+      onClick={[Function]}
+    >
+      Details
+    </a>
+  </div>
+</div>
+`;

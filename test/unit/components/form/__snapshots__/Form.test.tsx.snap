@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`проверка компонента form snapshot 1`] = `
+<div
+  className="Form"
+>
+  <div
+    className="mb-3"
+  >
+    <label
+      className="form-label"
+      htmlFor="f-name"
+    >
+      Name
+    </label>
+    <input
+      autoComplete="off"
+      className="Form-Field Form-Field_type_name form-control"
+      disabled={false}
+      id="f-name"
+      onChange={[Function]}
+      type="text"
+    />
+    <div
+      className="invalid-feedback"
+    >
+      Please provide your name
+    </div>
+  </div>
+  <div
+    className="mb-3"
+  >
+    <label
+      className="form-label"
+      htmlFor="f-phone"
+    >
+      Phone
+    </label>
+    <input
+      className="Form-Field Form-Field_type_phone form-control"
+      disabled={false}
+      id="f-phone"
+      onChange={[Function]}
+      type="text"
+    />
+    <div
+      className="invalid-feedback"
+    >
+      Please provide a valid phone
+    </div>
+  </div>
+  <div
+    className="mb-3"
+  >
+    <label
+      className="form-label"
+      htmlFor="f-address"
+    >
+      Address
+    </label>
+    <textarea
+      className="Form-Field Form-Field_type_address form-control"
+      disabled={false}
+      id="f-address"
+      onChange={[Function]}
+      rows={3}
+    />
+    <div
+      className="invalid-feedback"
+    >
+      Please provide a valid address
+    </div>
+  </div>
+  <button
+    className="Form-Submit btn btn-primary"
+    disabled={false}
+    onClick={[Function]}
+  >
+    Checkout
+  </button>
+</div>
+`;

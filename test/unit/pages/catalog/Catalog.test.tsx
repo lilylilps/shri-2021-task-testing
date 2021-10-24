@@ -4,12 +4,12 @@ import { Provider } from "react-redux";
 import { createMemoryHistory } from "history";
 
 import { it, describe, expect } from "@jest/globals";
-import { screen, render } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
-import { addToCart, initStore } from "../../../../src/client/store";
+import {  initStore } from "../../../../src/client/store";
 import { Catalog } from "../../../../src/client/pages/Catalog";
 import { ExampleApi, CartApi } from "../../../../src/client/api";
-import { CartItem, Product } from '../../../../src/common/types';
+import { CartItem } from '../../../../src/common/types';
 
 import axios from 'axios';
 import { Store } from "redux";
@@ -128,15 +128,21 @@ describe('проверка catalog', () => {
     });
 
     it('содержимое корзины сохраняется между перезагрузками страницы', async () => {
+        mockedAxios.get.mockResolvedValue({
+            data: [
+                { id: 1, name: "shorts", price: 200 },
+            ]
+        });
+
         const product = {
-            id: 1,
+            count: 1,
             name: "shorts",
             price: 200,
-        } as Product;
+        } as CartItem;
 
-        mockedAxios.get.mockResolvedValue({
-            data: [product]
-        });
+        cart.setState({ 1: product });
+        
+        store = initStore(api, cart);
 
         const history = createMemoryHistory({
             initialEntries: ['/catalog'],
@@ -152,7 +158,6 @@ describe('проверка catalog', () => {
         );
 
         const { rerender } = render(catalogPage);
-        store.dispatch(addToCart(product));
 
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
