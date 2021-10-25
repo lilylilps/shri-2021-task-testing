@@ -37,7 +37,6 @@ describe('проверка статических страниц', async functio
     });
 
     it('страница доставки', async function () {
-        await this.browser.setWindowSize(1024, 896);
         const browser = this.browser;
         await this.browser.url('/hw/store/delivery');
         await browser.assertView('plain', '.Application', {
