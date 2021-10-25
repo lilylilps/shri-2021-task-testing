@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`проверка productDetails snapshot 1`] = `
+<div
+  className="ProductDetails row"
+>
+  <div
+    className="col-12 col-sm-5 col-lg-4"
+  >
+    <img
+      className="Image"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkMAYAADkANVKH3ScAAAAASUVORK5CYII="
+    />
+  </div>
+  <div
+    className="col-12 col-sm-7 col-lg-6"
+  >
+    <h1
+      className="ProductDetails-Name"
+    >
+      shorts
+    </h1>
+    <p
+      className="ProductDetails-Description"
+    >
+      super shorts
+    </p>
+    <p
+      className="ProductDetails-Price fs-3"
+    >
+      $
+      200
+    </p>
+    <p>
+      <button
+        className="ProductDetails-AddToCart btn btn-primary btn-lg"
+        onClick={[Function]}
+      >
+        Add to Cart
+      </button>
+    </p>
+    <dl>
+      <dt>
+        Color
+      </dt>
+      <dd
+        className="ProductDetails-Color text-capitalize"
+      >
+        blue
+      </dd>
+      <dt>
+        Material
+      </dt>
+      <dd
+        className="ProductDetails-Material text-capitalize"
+      >
+        denim
+      </dd>
+    </dl>
+  </div>
+</div>
+`;

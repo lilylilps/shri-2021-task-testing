@@ -244,7 +244,7 @@ describe('проверка cart', () => {
         expect(catalogLink).not.toBeNull();
     });
 
-    it('успешное оформление заказа',async () => {
+    it('успешное оформление заказа', async () => {
         mockedAxios.get.mockResolvedValue({
             data: [
                 { id: 1, name: "shorts", price: 200 },
