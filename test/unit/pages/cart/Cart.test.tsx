@@ -4,14 +4,14 @@ import { Provider } from "react-redux";
 import { createMemoryHistory } from "history";
 
 import { it, describe, expect } from "@jest/globals";
-import { screen, render,  within, fireEvent } from "@testing-library/react";
+import { render,  within, fireEvent } from "@testing-library/react";
 import events from "@testing-library/user-event";
 
-import { addToCart, initStore } from "../../../../src/client/store";
+import { initStore } from "../../../../src/client/store";
 import { Application } from "../../../../src/client/Application";
 import { Cart } from "../../../../src/client/pages/Cart";
 import { ExampleApi, CartApi } from "../../../../src/client/api";
-import { CartItem, Product } from '../../../../src/common/types';
+import { CartItem } from '../../../../src/common/types';
 
 import axios from 'axios';
 import { Store } from "redux";
@@ -65,16 +65,24 @@ describe('проверка cart', () => {
         mockedAxios.get.mockResolvedValue({
             data: [
                 { id: 1, name: "shorts", price: 200 },
+                { id: 2, name: "pants", price: 400 },
             ]
         });
 
-        const product = {
+        const FirstProduct = {
             count: 1,
             name: "shorts",
             price: 200,
         } as CartItem;
 
-        cart.setState({ 1: product });
+        const SecondProduct = {
+            count: 3,
+            name: "pants",
+            price: 400,
+        } as CartItem;
+
+        cart.setState({ 1: FirstProduct,
+                        2: SecondProduct });
         
         store = initStore(api, cart);
 
@@ -90,14 +98,14 @@ describe('проверка cart', () => {
                 </Provider>
             </Router>
         );
-
+        
         const { getByRole } = render(application);
         await (function (ms) {
             return new Promise((res) => setTimeout(() => res(1), ms));
         })(100);
 
-        let cartLink = getByRole('link', { name: /cart \(1\)/i });
-        expect(cartLink.textContent).toEqual('Cart (1)');
+        let cartLink = getByRole('link', { name: /cart/i });
+        expect(cartLink.textContent).toEqual('Cart (2)');
     });
 
     it('в корзине отображается таблица с добавленными в нее товарами', async () => {

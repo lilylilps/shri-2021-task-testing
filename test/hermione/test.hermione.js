@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 
 describe('проверка статических страниц', async function () {
+
     it('главная страница', async function () {
         const browser = this.browser;
         await this.browser.url('/hw/store');
@@ -13,7 +14,7 @@ describe('проверка статических страниц', async functio
         await this.browser.setWindowSize(320, 896);
         const browser = this.browser;
         await this.browser.url('/hw/store');
-        await this.browser.assertView('plain', '.Application', {
+        await browser.assertView('plain', '.Application', {
             allowViewportOverflow: true,
         });
     });
@@ -30,7 +31,7 @@ describe('проверка статических страниц', async functio
         await this.browser.setWindowSize(320, 896);
         const browser = this.browser;
         await this.browser.url('/hw/store/contacts');
-        await this.browser.assertView('plain', '.Application', {
+        await browser.assertView('plain', '.Application', {
             allowViewportOverflow: true,
         });
     });
@@ -47,7 +48,7 @@ describe('проверка статических страниц', async functio
         await this.browser.setWindowSize(320, 896);
         const browser = this.browser;
         await this.browser.url('/hw/store/delivery');
-        await this.browser.assertView('plain', '.Application', {
+        await browser.assertView('plain', '.Application', {
             allowViewportOverflow: true,
         });
     });
