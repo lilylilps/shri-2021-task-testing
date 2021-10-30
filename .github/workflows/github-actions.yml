@@ -16,7 +16,10 @@ jobs:
           node-version: '14'
 
       - name: Install packages
-        run: npm install
+        run: npm install --quiet
 
       - name: Run tests
         run: sh ./ci/autotests.sh
+
+      - name: Build image
+        run: sh ./ci/docker.sh
