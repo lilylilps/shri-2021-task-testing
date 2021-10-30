@@ -2,8 +2,8 @@
 
 lastTag=$(git tag | sort -r | head -1)
 prevTag=$(git tag | sort -r | head -2 | tail -1)
-author=$(git show ${lastTag} | grep Author: )
-date=$(git show ${lastTag} | grep Date:)
+author=$(git show ${lastTag} | grep Author: | head -1)
+date=$(git show ${lastTag} | grep Date: | head -1)
 
 gitlog=$(git log ${prevTag}..${lastTag})
 
