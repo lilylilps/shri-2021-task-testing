@@ -8,5 +8,5 @@ jobs:
       - run: |
           ls ${{ github.workspace }}
       - run: |
-          chmod +x ../../ci/createTicket.sh
-          ../../ci/createTicket.sh
+          chmod +x ./ci/createTicket.sh
+          ./ci/createTicket.sh
