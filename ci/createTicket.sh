@@ -16,10 +16,14 @@ createTaskUrl="https://api.tracker.yandex.net/v2/issues/"
 getTaskUrl="https://api.tracker.yandex.net/v2/issues/_search"
 updateTaskUrl="https://api.tracker.yandex.net/v2/issues/"
 
+authHeader="Authorization: OAuth ${OAuth}"
+orgHeader="X-Org-Id: ${OrganizationId}"
+contentType="Content-Type: application/json"
+
 createStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request POST ${createTaskUrl} \
---header "Authorization: OAuth ${OAuth}" \
---header "X-Org-Id: ${OrganizationId}" \
---header 'Content-Type: application/json' \
+--header "${authHeader}" \
+--header "${orgHeader}" \
+--header "${contentType}" \
 --data-raw '{
     "queue": "TMP",
     "summary": "'"${creatingSummary}"'",
@@ -33,24 +37,26 @@ then
     echo "Cannot create ticket with the same release version"
 
     taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
-    --header "Authorization: OAuth ${OAuth}" \
-    --header "X-Org-Id: ${OrganizationId}" \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "filter": {
-            "unique": "'"${uniqueTag}"'"
-        }
-    }' | jq -r '.[0].key')
+        --header "${authHeader}" \
+        --header "${orgHeader}" \
+        --header "${contentType}" \
+        --data-raw '{
+            "filter": {
+                "unique": "'"${uniqueTag}"'"
+            }
+        }' | jq -r '.[0].key'
+    )
 
     updateStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request PATCH \
-    "${updateTaskUrl}${taskKey}" \
-    --header "Authorization: OAuth ${OAuth}" \
-    --header "X-Org-Id: ${OrganizationId}" \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "summary": "'"${updatingSummary}"'",
-        "description": "'"${description}"'"
-    }')
+        "${updateTaskUrl}${taskKey}" \
+        --header "${authHeader}" \
+        --header "${orgHeader}" \
+        --header "${contentType}" \
+        --data-raw '{
+            "summary": "'"${updatingSummary}"'",
+            "description": "'"${description}"'"
+        }'
+    )
 
     if [ "$updateStatusCode" -ne 200 ]
     then
@@ -58,7 +64,6 @@ then
         exit 1
     else
         echo "Successfully update ticket ${taskKey}"
-        exit 0
     fi
 
 elif [ "$createStatusCode" -ne 201 ]
@@ -67,5 +72,15 @@ then
     exit 1
 else
     echo "Successfully create ticket"
-    exit 0
 fi
+
+
+# createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
+# curl --location --request POST \
+#         "${createCommentUrl}" \
+#         --header "${authHeader}" \
+#         --header "${orgHeader}" \
+#         --header "${contentType}" \
+#         --data-raw '{
+#             "text": "'"${gitlog}"'"
+#         }'

@@ -17,3 +17,21 @@ jobs:
           OAuth: ${{ secrets.OAuth }}
           OrganizationId: ${{ secrets.OrganizationId }}
 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install packages
+        run: npm install --silent
+
+      - name: Run tests
+        run: sh ./ci/autotests.sh
+        env:
+          OAuth: ${{ secrets.OAuth }}
+          OrganizationId: ${{ secrets.OrganizationId }}
+
+      - name: Build image
+        run: sh ./ci/docker.sh
+        env:
+          OAuth: ${{ secrets.OAuth }}
+          OrganizationId: ${{ secrets.OrganizationId }}
