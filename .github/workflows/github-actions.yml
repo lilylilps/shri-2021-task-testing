@@ -1,0 +1,13 @@
+name: Make release
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  create-ticket:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          chmod +x createTicket.sh
+          createTicket.sh
