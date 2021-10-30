@@ -5,5 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          chmod +x createTicket.sh
-          createTicket.sh
+          chmod +x ../../ci/createTicket.sh
+          ../../ci/createTicket.sh
