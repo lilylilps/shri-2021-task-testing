@@ -79,7 +79,7 @@ echo "{\"text\": \"$(echo $gitlog | tr -d ':' | tr '\r\n' ' ')\"}" | jq > tmp.js
 
 createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
 
-curl --silent --location --request POST \
+curl --silent --output /dev/null --location --request POST \
         "${createCommentUrl}" \
         --header "${authHeader}" \
         --header "${orgHeader}" \

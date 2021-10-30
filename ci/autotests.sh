@@ -23,7 +23,7 @@ echo "{\"text\": \"$(npx jest 2>&1 | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.j
 
 createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
 
-curl --silent --location --request POST \
+curl --silent --output /dev/null --location --request POST \
         "${createCommentUrl}" \
         --header "${authHeader}" \
         --header "${orgHeader}" \
