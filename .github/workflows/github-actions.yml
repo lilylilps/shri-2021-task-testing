@@ -1,9 +1,5 @@
 name: Make release
-on:
-  push:
-    tags:
-    - '*'
-
+on: [push]
 jobs:
   create-ticket:
     runs-on: ubuntu-latest
