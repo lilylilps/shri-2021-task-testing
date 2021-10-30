@@ -4,6 +4,7 @@ jobs:
   create-ticket:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - run: |
           chmod +x ../../ci/createTicket.sh
           ../../ci/createTicket.sh
