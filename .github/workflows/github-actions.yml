@@ -16,7 +16,7 @@ jobs:
           node-version: '14'
 
       - name: Install packages
-        run: npm install --quiet
+        run: npm install --silent
 
       - name: Run tests
         run: sh ./ci/autotests.sh
