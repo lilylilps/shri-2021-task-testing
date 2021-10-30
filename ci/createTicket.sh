@@ -33,17 +33,6 @@ createStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null -
     }'
 )
 
-taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
-    --header "${authHeader}" \
-    --header "${orgHeader}" \
-    --header "${contentType}" \
-    --data-raw '{
-        "filter": {
-            "unique": "'"${uniqueTag}"'"
-        }
-    }' | jq -r '.[0].key'
-)
-
 if [ "$createStatusCode" -eq 409 ]
 then
     echo "Cannot create ticket with the same release version"
@@ -75,6 +64,18 @@ else
     echo "Successfully create ticket"
 fi
 
+sleep 1
+
+taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
+    --header "${authHeader}" \
+    --header "${orgHeader}" \
+    --header "${contentType}" \
+    --data-raw '{
+        "filter": {
+            "unique": "'"${uniqueTag}"'"
+        }
+    }' | jq -r '.[0].key'
+)
 
 echo "{\"text\": \"$(echo $gitlog | tr -d ':' | tr '\r\n' ' ')\"}" | jq > tmp.json
 
