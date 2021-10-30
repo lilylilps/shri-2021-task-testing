@@ -4,6 +4,11 @@ lastTag=$(git tag | sort -r | head -1)
 
 imageName="store_app:${lastTag}"
 
-docker build -t ${imageName} .
+docker build . -f Dockerfile -t ${imageName}
 
-'Build success' > build_result.txt
+if [ $? -ne 0 ]
+then
+    echo 'Error with build docker image'
+else
+    echo 'Build success'
+fi
