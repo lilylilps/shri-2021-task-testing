@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          ls ${{ github.workspace }}
-      - run: |
-          chmod +x ./ci/createTicket.sh
-          ./ci/createTicket.sh
+        with:
+          fetch-depth: 0
+
+      - name: Run script file
+        run: sh ./ci/createTicket.sh
