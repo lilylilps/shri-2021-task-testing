@@ -7,19 +7,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - name: Install jq
+        run: sudo apt-get install -y jq
 
       - name: Create ticket
         run: sh ./ci/createTicket.sh
+        env:
+          OAuth: ${{ secrets.OAuth }}
+          OrganizationId: ${{ secrets.OrganizationId }}
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install packages
-        run: npm install --silent
-
-      - name: Run tests
-        run: sh ./ci/autotests.sh
-
-      - name: Build image
-        run: sh ./ci/docker.sh
