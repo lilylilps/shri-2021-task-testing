@@ -75,12 +75,15 @@ else
 fi
 
 
-# createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
-# curl --location --request POST \
-#         "${createCommentUrl}" \
-#         --header "${authHeader}" \
-#         --header "${orgHeader}" \
-#         --header "${contentType}" \
-#         --data-raw '{
-#             "text": "'"${gitlog}"'"
-#         }'
+echo "{\"text\": \"$(echo $gitlog | tr -d ':' | tr '\r\n' ' ')\"}" | jq > tmp.json
+
+createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
+
+curl --silent --location --request POST \
+        "${createCommentUrl}" \
+        --header "${authHeader}" \
+        --header "${orgHeader}" \
+        --header "${contentType}" \
+        --data-binary @tmp.json
+
+rm tmp.json

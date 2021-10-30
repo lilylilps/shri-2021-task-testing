@@ -19,17 +19,15 @@ taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
     }' | jq -r '.[0].key'
 )
 
+echo "{\"text\": \"$(npx jest 2>&1 | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.json
+
 createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
 
-testResult=$(npx jest 2>&1)
+curl --silent --location --request POST \
+        "${createCommentUrl}" \
+        --header "${authHeader}" \
+        --header "${orgHeader}" \
+        --header "${contentType}" \
+        --data-binary @tmp.json
 
-# echo ${testResult}
-
-# curl --location --request POST \
-#         "${createCommentUrl}" \
-#         --header "${authHeader}" \
-#         --header "${orgHeader}" \
-#         --header "${contentType}" \
-#         --data-raw '{
-#             "text": "'"${testResult}"'"
-#         }'
+rm tmp.json
