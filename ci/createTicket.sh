@@ -7,7 +7,7 @@ date=$(git show ${lastTag} | grep Date:)
 
 gitlog=$(git log ${prevTag}..${lastTag})
 
-uniqueTag="lilylilps/shri-2021-task-testing/release/${lastTag}"
+uniqueTag="lilylilps/shri-2021-task-testing/release/v3.0.1"
 creatingSummary="Create release task for lilylilps/shri-2021-task-testing for ${lastTag}"
 updatingSummary="Update release task for lilylilps/shri-2021-task-testing for ${lastTag}"
 description="${author}\n${date}\nVersion: ${lastTag}"
@@ -21,31 +21,32 @@ orgHeader="X-Org-Id: ${OrganizationId}"
 contentType="Content-Type: application/json"
 
 createStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request POST ${createTaskUrl} \
---header "${authHeader}" \
---header "${orgHeader}" \
---header "${contentType}" \
---data-raw '{
-    "queue": "TMP",
-    "summary": "'"${creatingSummary}"'",
-    "type": "task",
-    "description": "'"${description}"'",
-    "unique": "'"${uniqueTag}"'"
-}')
+    --header "${authHeader}" \
+    --header "${orgHeader}" \
+    --header "${contentType}" \
+    --data-raw '{
+        "queue": "TMP",
+        "summary": "'"${creatingSummary}"'",
+        "type": "task",
+        "description": "'"${description}"'",
+        "unique": "'"${uniqueTag}"'"
+    }'
+)
+
+taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
+    --header "${authHeader}" \
+    --header "${orgHeader}" \
+    --header "${contentType}" \
+    --data-raw '{
+        "filter": {
+            "unique": "'"${uniqueTag}"'"
+        }
+    }' | jq -r '.[0].key'
+)
 
 if [ "$createStatusCode" -eq 409 ]
 then
     echo "Cannot create ticket with the same release version"
-
-    taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
-        --header "${authHeader}" \
-        --header "${orgHeader}" \
-        --header "${contentType}" \
-        --data-raw '{
-            "filter": {
-                "unique": "'"${uniqueTag}"'"
-            }
-        }' | jq -r '.[0].key'
-    )
 
     updateStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request PATCH \
         "${updateTaskUrl}${taskKey}" \
