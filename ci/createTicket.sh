@@ -8,8 +8,7 @@ date=$(git show ${lastTag} | grep Date: | head -1)
 gitlog=$(git log --pretty=format:"%h - %an, %cd : %s, %ce" --date=short ${prevTag}..${lastTag})
 
 uniqueTag="lilylilps/shri-2021-task-testing/release/${lastTag}"
-creatingSummary="Create release task for lilylilps/shri-2021-task-testing for ${lastTag}"
-updatingSummary="Update release task for lilylilps/shri-2021-task-testing for ${lastTag}"
+summary="Release task for lilylilps/shri-2021-task-testing for ${lastTag}"
 description="${author}\n${date}\nVersion: ${lastTag}"
 
 createTaskUrl="https://api.tracker.yandex.net/v2/issues/"
@@ -26,7 +25,7 @@ createStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null -
     --header "${contentType}" \
     --data-raw '{
         "queue": "TMP",
-        "summary": "'"${creatingSummary}"'",
+        "summary": "'"${summary}"'",
         "type": "task",
         "description": "'"${description}"'",
         "unique": "'"${uniqueTag}"'"
@@ -56,8 +55,8 @@ then
         --header "${orgHeader}" \
         --header "${contentType}" \
         --data-raw '{
-            "summary": "'"${updatingSummary}"'",
-            "description": "'"${description}"'"
+            "summary": "'"${summary}"'",
+            "description": "'"${description}"' (updated)"
         }'
     )
 
