@@ -8,6 +8,15 @@ authHeader="Authorization: OAuth ${OAuth}"
 orgHeader="X-Org-Id: ${OrganizationId}"
 contentType="Content-Type: application/json"
 
+testResult=$(npx jest 2>&1)
+
+if [[ $testResult == *"FAIL"* ]]
+then
+  echo "Autotest faild"
+  echo $testResult
+  exit 1
+fi
+
 taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
     --header "${authHeader}" \
     --header "${orgHeader}" \
@@ -19,15 +28,24 @@ taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
     }' | jq -r '.[0].key'
 )
 
-echo "{\"text\": \"$(npx jest 2>&1 | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.json
+echo "{\"text\": \"$(echo $testResult | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.json
 
 createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
 
-curl --silent --output /dev/null --location --request POST \
+createCommentStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request POST \
         "${createCommentUrl}" \
         --header "${authHeader}" \
         --header "${orgHeader}" \
         --header "${contentType}" \
         --data-binary @tmp.json
+)
+
+if [ "$createCommentStatusCode" -ne 201 ]
+then
+    echo "Error with creating comment with test result for issue ${taskKey}"
+    exit 1
+else
+    echo "Successfully created comment with test result for issue ${taskKey}"
+fi
 
 rm tmp.json

@@ -12,7 +12,6 @@ import { Helmet } from 'react-helmet';
 import { Cart } from './pages/Cart';
 import { useSelector } from 'react-redux';
 import { ApplicationState } from './store';
-import { Test1 } from './pages/Test1';
 
 const bem = cn('Application');
 
@@ -41,7 +40,6 @@ export const Application: FC = () => {
                         <NavLink className="nav-link" activeClassName="active" to="/delivery" onClick={hide}>Delivery</NavLink>
                         <NavLink className="nav-link" activeClassName="active" to="/contacts" onClick={hide}>Contacts</NavLink>
                         <NavLink className="nav-link" activeClassName="active" to="/cart" onClick={hide}>{cartLabel}</NavLink>
-                        <NavLink className="nav-link" activeClassName="active" to="/test1" onClick={hide}>Test1</NavLink>
                     </div>
                 </div>
             </div>
@@ -54,7 +52,6 @@ export const Application: FC = () => {
                 <Route path="/delivery" component={Delivery} />
                 <Route path="/contacts" component={Contacts} />
                 <Route path="/cart" component={Cart} />
-                <Route path="/test1" component={Test1} />
             </Switch>
         </div>
     </div>;
