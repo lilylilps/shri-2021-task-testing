@@ -7,7 +7,7 @@ date=$(git show ${lastTag} | grep Date: | head -1)
 
 gitlog=$(git log --pretty=format:"%h - %an, %cd : %s, %ce" --date=short ${prevTag}..${lastTag})
 
-uniqueTag="lilylilps/shri-2021-task-testing/release/v2.0.7"
+uniqueTag="lilylilps/shri-2021-task-testing/release/${lastTag}"
 creatingSummary="Create release task for lilylilps/shri-2021-task-testing for ${lastTag}"
 updatingSummary="Update release task for lilylilps/shri-2021-task-testing for ${lastTag}"
 description="${author}\n${date}\nVersion: ${lastTag}"
