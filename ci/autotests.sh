@@ -10,12 +10,9 @@ contentType="Content-Type: application/json"
 
 testResult=$(npx jest 2>&1)
 
-if [[ $testResult == *"FAIL"* ]]
-then
-  echo "Autotest faild"
-  echo $testResult
-  exit 1
-fi
+echo $testResult
+
+echo "{\"text\": \"$(echo $testResult | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.json
 
 taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
     --header "${authHeader}" \
@@ -28,8 +25,6 @@ taskKey=$(curl --silent --location --request POST ${getTaskUrl} \
     }' | jq -r '.[0].key'
 )
 
-echo "{\"text\": \"$(echo $testResult | tr -d ':' | tr "\r\n" " ")\"}" | jq > tmp.json
-
 createCommentUrl="https://api.tracker.yandex.net/v2/issues/${taskKey}/comments"
 
 createCommentStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev/null --location --request POST \
@@ -40,6 +35,8 @@ createCommentStatusCode=$(curl --write-out '%{http_code}' --silent --output /dev
         --data-binary @tmp.json
 )
 
+rm tmp.json
+
 if [ "$createCommentStatusCode" -ne 201 ]
 then
     echo "Error with creating comment with test result for issue ${taskKey}"
@@ -48,4 +45,8 @@ else
     echo "Successfully created comment with test result for issue ${taskKey}"
 fi
 
-rm tmp.json
+if [[ $testResult == *"FAIL"* ]]
+then
+  echo "Autotests failed"
+  exit 1
+fi
