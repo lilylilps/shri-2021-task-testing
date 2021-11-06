@@ -44,16 +44,6 @@ describe('проверка статических страниц', async functio
         });
     });
 
-    it('навигационное меню должно скрываться за "гамбургер"', async function () {
-        await this.browser.setWindowSize(320, 896);
-        const navigationToggler = await this.browser.$('.navbar-toggler');
-        const navigationMenu = await this.browser.$('.navbar-collapse');
-        
-        assert.isFalse(await navigationMenu.isDisplayed());
-        navigationToggler.click();
-        assert.isTrue(await navigationMenu.isDisplayed());
-    });
-
     it('перезагрузка корзины', async function () {
         await this.browser.setWindowSize(1024, 896);
         const browser = this.browser;
